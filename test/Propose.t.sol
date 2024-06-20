@@ -13,46 +13,30 @@ contract ProposeTest is Test {
         propose = new Propose();
     }
 
-    function testStorageSlot() public {
-        bytes32 expectedSlot = Storage.getStorageSlot();
-        console.logBytes32(expectedSlot);
-        // スクリプトの出力と一致するか確認
-        assertEq(expectedSlot, 0x29e83060e8be5db436e9eb1e087b0814968a5cf4bd1625a4880b33d04591de00);
-    }
-
     function testCreateProposal() public {
-        propose.createProposal("Test Proposal", block.timestamp + 10, 10000);
+        string memory proposalName = "Test Proposal";
+        uint startTime = block.timestamp + 10;
+        uint proposalDuration = 10000;
 
-        (
-            uint id,
-            address proposer,
-            string memory name,
-            uint start_time,
-            uint proposal_duration,
-            Schema.ProposalStatus status
-        ) = propose.getProposal(0);
+        propose.createProposal(proposalName, startTime, proposalDuration);
 
-        console.log("getProposal - Proposal ID: ", id);
-        console.log("getProposal - Proposal Proposer: ", proposer);
-        console.log("getProposal - Proposal Name: ", name);
-        console.log("getProposal - Proposal Start Time: ", start_time);
-        console.log("getProposal - Proposal Duration: ", proposal_duration);
-        console.log("getProposal - Proposal Status: ", uint(status));
+        Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();
+        Schema.Proposal storage storedProposal = ps.proposals[0];
 
-        Schema.Proposal memory proposal = Storage.readProposal(0);
+        // テストログの出力
+        console.log("Direct Storage Access - Proposal ID: ", storedProposal.id);
+        console.log("Direct Storage Access - Proposal Proposer: ", storedProposal.proposer);
+        console.log("Direct Storage Access - Proposal Name: ", storedProposal.name);
+        console.log("Direct Storage Access - Proposal Start Time: ", storedProposal.start_time);
+        console.log("Direct Storage Access - Proposal Duration: ", storedProposal.proposal_duration);
+        console.log("Direct Storage Access - Proposal Status: ", uint(storedProposal.status));
 
-        console.log("Direct Storage Access - Proposal ID: ", proposal.id);
-        console.log("Direct Storage Access - Proposal Proposer: ", proposal.proposer);
-        console.log("Direct Storage Access - Proposal Name: ", proposal.name);
-        console.log("Direct Storage Access - Proposal Start Time: ", proposal.start_time);
-        console.log("Direct Storage Access - Proposal Duration: ", proposal.proposal_duration);
-        console.log("Direct Storage Access - Proposal Status: ", uint(proposal.status));
-
-        assertEq(proposal.id, id);
-        assertEq(proposal.proposer, proposer);
-        assertEq(proposal.name, name);
-        assertEq(proposal.start_time, start_time);
-        assertEq(proposal.proposal_duration, proposal_duration);
-        assertEq(uint(proposal.status), uint(status));
+        // 直接ストレージから読み取り
+        assertEq(storedProposal.id, 0);
+        assertEq(storedProposal.proposer, address(this));
+        assertEq(storedProposal.name, proposalName);
+        assertEq(storedProposal.start_time, startTime);
+        assertEq(storedProposal.proposal_duration, proposalDuration);
+        assertEq(uint(storedProposal.status), uint(Schema.ProposalStatus.Ongoing));
     }
 }

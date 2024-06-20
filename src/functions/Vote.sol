@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "../simple-dao/storage/Schema.sol";
-import "../simple-dao/storage/Storage.sol";
+import {Schema} from "../simple-dao/storage/Schema.sol";
+import {Storage} from "../simple-dao/storage/Storage.sol";
 
 import "forge-std/Test.sol";
 
 contract Vote {
-    using Storage for Storage.Layout;
+    using Storage for *;
 
     event VoteCast(uint indexed proposalId, address indexed voter, bool support, uint timestamp);
 
     function castVote(uint proposalId, bool support) external {
-        Storage.Layout storage layout = Storage.layout();
-        Schema.Proposal storage proposal = layout.proposals[proposalId];
+        Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();
+        Schema.Proposal storage proposal = ps.proposals[proposalId];
 
         // デバッグ用ログ出力
         console.log("Fetching Proposal ID in Vote: ", proposalId);
@@ -26,9 +26,9 @@ contract Vote {
         require(block.timestamp <= proposal.start_time + proposal.proposal_duration, "Vote: Voting has ended");
 
         bytes32 voteKey = keccak256(abi.encodePacked(proposalId, msg.sender));
-        require(layout.votes[voteKey].voter == address(0), "Vote: Voter has already voted");
+        require(ps.votes[voteKey].voter == address(0), "Vote: Voter has already voted");
 
-        layout.votes[voteKey] = Schema.Vote({
+        ps.votes[voteKey] = Schema.Vote({
             proposal_id: proposalId,
             voter: msg.sender,
             support: support,
@@ -36,10 +36,5 @@ contract Vote {
         });
 
         emit VoteCast(proposalId, msg.sender, support, block.timestamp);
-    }
-
-    function getVote(uint proposalId, address voter) external view returns (Schema.Vote memory) {
-        bytes32 voteKey = keccak256(abi.encodePacked(proposalId, voter));
-        return Storage.layout().votes[voteKey];
     }
 }

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "../simple-dao/storage/Schema.sol";
-import "../simple-dao/storage/Storage.sol";
+import {Schema} from "../simple-dao/storage/Schema.sol";
+import {Storage} from "../simple-dao/storage/Storage.sol";
 import "./Increment.sol";
 
 contract Execute {
-    using Storage for Storage.Layout;
+    using Storage for *;
 
     event ProposalExecuted(uint indexed proposalId);
 
@@ -18,7 +18,8 @@ contract Execute {
     }
 
     function executeProposal(uint proposalId) external {
-        Schema.Proposal storage proposal = Storage.layout().proposals[proposalId];
+        Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();
+        Schema.Proposal storage proposal = ps.proposals[proposalId];
         require(proposal.id == proposalId, "Execute: Proposal does not exist");
         require(proposal.status == Schema.ProposalStatus.Approved, "Execute: Proposal is not approved");
 

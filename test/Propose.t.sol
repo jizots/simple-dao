@@ -20,10 +20,11 @@ contract ProposeTest is Test {
 
         propose.createProposal(proposalName, startTime, proposalDuration);
 
+        // モックコントラクトでストレージにアクセス
         Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();
         Schema.Proposal storage storedProposal = ps.proposals[0];
-
-        // テストログの出力
+        
+        // デバッグログを追加
         console.log("Direct Storage Access - Proposal ID: ", storedProposal.id);
         console.log("Direct Storage Access - Proposal Proposer: ", storedProposal.proposer);
         console.log("Direct Storage Access - Proposal Name: ", storedProposal.name);
@@ -31,7 +32,7 @@ contract ProposeTest is Test {
         console.log("Direct Storage Access - Proposal Duration: ", storedProposal.proposal_duration);
         console.log("Direct Storage Access - Proposal Status: ", uint(storedProposal.status));
 
-        // 直接ストレージから読み取り
+        // アサーション
         assertEq(storedProposal.id, 0);
         assertEq(storedProposal.proposer, address(this));
         assertEq(storedProposal.name, proposalName);

@@ -13,6 +13,9 @@ contract Vote {
 
     function castVote(uint proposalId, bool support) external {
         Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();
+
+        require(proposalId < ps.globalState.nextProposalId, "Vote: Proposal ID is invalid");
+        
         Schema.Proposal storage proposal = ps.proposals[proposalId];
 
         // デバッグ用ログ出力

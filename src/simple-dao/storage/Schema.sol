@@ -31,5 +31,6 @@ library Schema {
         GlobalState globalState;
         mapping(uint => Proposal) proposals;
         mapping(bytes32 => Vote) votes;
+        mapping(address => bool) voters;
     }
 }

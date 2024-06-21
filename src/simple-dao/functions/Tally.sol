@@ -49,16 +49,22 @@ contract Tally {
         uint supportVotes = 0;
         uint againstVotes = 0;
 
-        for (uint i = 0; i < ps.globalState.proposalIds.length; i++) {
-            bytes32 voteKey = keccak256(abi.encodePacked(proposalId, ps.globalState.proposalIds[i]));
-            Schema.Vote storage vote = ps.votes[voteKey];
+        // votersマッピング内のすべての投票者を確認する
+        for (uint i = 0; i < ps.voters.length; i++) 
+        {
+            // votesマッピングから投票を取得
+            Schema.Vote storage vote = ps.votes[keccak256(abi.encodePacked(proposalId, ps.voters[i]))];
 
-            if (vote.proposal_id == proposalId) {
-                if (vote.support) {
-                    supportVotes++;
-                } else {
-                    againstVotes++;
-                }
+            // 該当する投票が存在しない場合は無視
+            if (vote.voter == address(0)) {
+                continue;
+            }
+
+            // 該当する提案IDに対する投票を集計する
+            if (vote.support) {
+                supportVotes++;
+            } else {
+                againstVotes++;
             }
         }
 

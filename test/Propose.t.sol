@@ -2,15 +2,25 @@
 pragma solidity ^0.8.24;
 
 import "forge-std/Test.sol";
-import "../src/functions/Propose.sol";
+
+import "../src/simple-dao/functions/Propose.sol";
 import "../src/simple-dao/storage/Schema.sol";
 import "../src/simple-dao/storage/Storage.sol";
 
-contract ProposeTest is Test {
-    Propose propose;
+import {MCTest} from "@mc/devkit/Flattened.sol";
+import {stdError} from "forge-std/StdError.sol";
+import {SimpleDAOFacade} from "../src/simple-dao/interfaces/SimpleDAOFacade.sol";
+
+import {Storage} from "../src/simple-dao/storage/Storage.sol";
+import {Propose} from "../src/simple-dao/functions/Propose.sol";
+
+contract ProposeTest is MCTest {
+    SimpleDAOFacade public _SimpleDAO = SimpleDAOFacade(target);
+
+    receive() external payable {}
 
     function setUp() public {
-        propose = new Propose();
+        _use(_SimpleDAO.createProposal.selector, address(new Propose()));
     }
 
     function testCreateProposal() public {
@@ -18,7 +28,7 @@ contract ProposeTest is Test {
         uint startTime = block.timestamp + 10;
         uint proposalDuration = 10000;
 
-        propose.createProposal(proposalName, startTime, proposalDuration);
+        _SimpleDAO.createProposal(proposalName, startTime, proposalDuration);
 
         // モックコントラクトでストレージにアクセス
         Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();

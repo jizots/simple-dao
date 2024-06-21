@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Schema} from "../simple-dao/storage/Schema.sol";
-import {Storage} from "../simple-dao/storage/Storage.sol";
+import {Schema} from "../storage/Schema.sol";
+import {Storage} from "../storage/Storage.sol";
 import "./Increment.sol";
 
 contract Execute {

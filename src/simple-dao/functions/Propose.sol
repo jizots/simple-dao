@@ -15,7 +15,7 @@ contract Propose {
         require(startTime > block.timestamp, "Propose: Start time must be in the future");
 
         Schema.ProposalSystem storage ps = Storage.ProposalSystemStorage();
-        uint newProposalId = ps.globalState.proposals.length;
+        uint newProposalId = ps.globalState.proposalIds.length;
 
         /* for debugging */
         // console.log("Before Writing Proposal");
@@ -31,7 +31,8 @@ contract Propose {
         });
 
         ps.proposals[newProposalId] = newProposal;
-        ps.globalState.proposals.push(newProposalId);
+        ps.globalState.proposalIds.push(newProposalId);
+        ps.globalState.nextProposalId += 1;
 
         /* for debugging */
         // console.log("After Writing Proposal");

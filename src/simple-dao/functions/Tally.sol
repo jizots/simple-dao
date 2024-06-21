@@ -32,8 +32,8 @@ contract Tally {
         uint frequency = ps.globalState.tally_frequency;
         require(frequency > 0, "Tally: Tally frequency is not set");
 
-        for (uint i = 0; i < ps.globalState.proposals.length; i++) {
-            uint proposalId = ps.globalState.proposals[i];
+        for (uint i = 0; i < ps.globalState.proposalIds.length; i++) {
+            uint proposalId = ps.globalState.proposalIds[i];
             Schema.Proposal storage proposal = ps.proposals[proposalId];
 
             if (proposal.status == Schema.ProposalStatus.Ongoing && block.timestamp >= proposal.start_time + frequency) {
@@ -49,8 +49,8 @@ contract Tally {
         uint supportVotes = 0;
         uint againstVotes = 0;
 
-        for (uint i = 0; i < ps.globalState.proposals.length; i++) {
-            bytes32 voteKey = keccak256(abi.encodePacked(proposalId, ps.globalState.proposals[i]));
+        for (uint i = 0; i < ps.globalState.proposalIds.length; i++) {
+            bytes32 voteKey = keccak256(abi.encodePacked(proposalId, ps.globalState.proposalIds[i]));
             Schema.Vote storage vote = ps.votes[voteKey];
 
             if (vote.proposal_id == proposalId) {

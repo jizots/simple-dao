@@ -16,9 +16,9 @@ contract Vote {
         Schema.Proposal storage proposal = ps.proposals[proposalId];
 
         // デバッグ用ログ出力
-        console.log("Fetching Proposal ID in Vote: ", proposalId);
-        console.log("Stored Proposal Start Time: ", proposal.start_time);
-        console.log("Stored Proposal Duration: ", proposal.proposal_duration);
+        // console.log("Fetching Proposal ID in Vote: ", proposalId);
+        // console.log("Stored Proposal Start Time: ", proposal.start_time);
+        // console.log("Stored Proposal Duration: ", proposal.proposal_duration);
 
         require(proposal.id == proposalId, "Vote: Proposal does not exist");
         require(proposal.status == Schema.ProposalStatus.Ongoing, "Vote: Proposal is not ongoing");

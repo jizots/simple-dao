@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 library Schema {
     struct GlobalState {
-        uint[] proposals;
+        uint[] proposalIds;
         uint approvedProposals;
         uint tally_frequency;
         uint nextProposalId;
